@@ -18,7 +18,7 @@ gs.init(
     precision = '64',
     debug = False,
     eps = 1e-12,
-    logging_level = None,
+    logging_level = "warning",
     backend = gs.cuda,
     theme = 'dark',
     logger_verbose_time = False
@@ -26,7 +26,7 @@ gs.init(
 
 scene = gs.Scene(
     sim_options=gs.options.SimOptions(
-        dt=0.001,
+        dt=0.01,
         gravity=(0, 0, -9.806),
     ),
     show_viewer=True,
@@ -99,23 +99,15 @@ class Agent(Robot):
 
         return self.agent
 
-    def action(self, velocity=0.0):
-        if self.wheel_dofs is None:
-            raise RuntimeError("create() を先に呼んでください。")
-
-        # コマンド準備
-        if isinstance(velocity, (list, tuple, np.ndarray)):
-            vel_cmd = np.array(velocity, dtype=np.float64)
-        else:
-            vel_cmd = np.array([velocity, velocity], dtype=np.float64)
-
-        # 速度指令送信
+    def action(self, velocity_right=0.0, velocity_left=0.0):
+        vel_cmd = np.array([velocity_right, velocity_left], dtype=np.float64)
         self.agent.control_dofs_velocity(vel_cmd, self.wheel_dofs)
+
 
 agent = Agent()
 agent.create()
 
-num = 1
+num = 10
 scene.build(n_envs=num, env_spacing=(0.5, 0.5))
 
 kp = np.zeros(len(agent.wheel_dofs), dtype=np.float64)
@@ -123,6 +115,8 @@ kv = np.ones(len(agent.wheel_dofs), dtype=np.float64) * 100.0
 agent.agent.set_dofs_kp(kp=kp, dofs_idx_local=agent.wheel_dofs)
 agent.agent.set_dofs_kv(kv=kv, dofs_idx_local=agent.wheel_dofs)
 
+print("wheel_dofs:", agent.wheel_dofs)
+
 for i in range(100000):
-    agent.action(velocity=100.0)
+    agent.action(velocity_right=50.0, velocity_left=-50.0)
     scene.step()
