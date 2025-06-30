@@ -1,0 +1,44 @@
+<mujoco model="inverted_pendulum">
+    <option timestep='0.001' integrator="implicitfast" gravity="0.0 0.0 -9.81"/>
+
+    <asset>
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2"
+                 width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+        <material name="matplane" reflectance="0." texture="texplane" texrepeat="1 1" texuniform="true"/>
+
+        <mesh name="base" file="stl/base.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="wheel" file="stl/wheel.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="pipe" file="stl/pipe.stl" scale="0.001 0.001 0.001"/>
+    </asset>
+
+    <worldbody>
+        <light directional="true" diffuse=".4 .4 .4" specular="0.1 0.1 0.1" pos="0 0 5.0" dir="0 0 -1" castshadow="false"/>
+        <light directional="true" diffuse=".6 .6 .6" specular="0.2 0.2 0.2" pos="0 0 4" dir="0 0 -1"/>
+        <geom name="ground" type="plane" size="0 0 1" pos="0.001 0 0" quat="1 0 0 0" material="matplane" condim="1" conaffinity='15'/>
+
+        <body pos="0 0 0.1" euler="90 0 0">
+            <joint type="free"/>
+            <geom type="mesh" mesh="base"/>
+
+            <body pos="0.0702 -0.021 0.040293" euler="0 90 0">
+                <joint type="hinge" axis="0 0 1"/>
+                <geom type="mesh" mesh="wheel"/>
+            </body>
+
+            <body pos="-0.0702 -0.021 0.040293" euler="0 270 0">
+                <joint type="hinge" axis="0 0 1"/>
+                <geom type="mesh" mesh="wheel"/>
+            </body>
+
+            <body pos="0.0 0.014 0.035" euler="0 -90 0">
+                <joint type="hinge" axis="0 0 1" pos="0.0 0.006 0.0"/>
+                <geom type="mesh" mesh="pipe"/>
+            </body>
+
+            <body pos="0.0 -0.024 -0.045" euler="0 -90 0">
+                <joint type="ball"/>
+                <geom name="ball" size="0.022" rgba="0.0 0.0 0.0 1.0"/>
+            </body>
+        </body>
+    </worldbody>
+</mujoco>
