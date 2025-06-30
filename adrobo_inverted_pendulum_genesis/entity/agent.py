@@ -10,9 +10,7 @@ from adrobo_inverted_pendulum_genesis.entity.entity import Robot
 
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-
 MJCF_dir = os.path.join(script_dir, 'MJCF')
-
 robot = os.path.join(MJCF_dir, 'inverted_pendulum.xml')
 
 gs.init(
@@ -28,7 +26,7 @@ gs.init(
 
 scene = gs.Scene(
     sim_options=gs.options.SimOptions(
-        dt=0.01,
+        dt=0.001,
         gravity=(0, 0, -9.806),
     ),
     show_viewer=True,
@@ -61,6 +59,8 @@ class Agent(Robot):
         self.default_ori = [0.0, 0.0, 0.0]
         self.position = self.start_pos
         self.agent = None
+        self.wheel_joints = ["right_wheel", "left_wheel"]
+        self.wheel_dofs = None
         self.surfaces = gs.surfaces.Default(
             color=(0.0, 0.0, 0.0),
             opacity=1.0,
@@ -92,11 +92,25 @@ class Agent(Robot):
             visualize_contact=False,
             vis_mode="collision",
         )
+        self.wheel_dofs = [
+            self.agent.get_joint(name).dof_idx_local
+            for name in self.wheel_joints
+        ]
 
         return self.agent
 
-    def action(self, wheel_angle=0.0):
-        pass
+    def action(self, velocity=0.0):
+        if self.wheel_dofs is None:
+            raise RuntimeError("create() を先に呼んでください。")
+
+        # コマンド準備
+        if isinstance(velocity, (list, tuple, np.ndarray)):
+            vel_cmd = np.array(velocity, dtype=np.float64)
+        else:
+            vel_cmd = np.array([velocity, velocity], dtype=np.float64)
+
+        # 速度指令送信
+        self.agent.control_dofs_velocity(vel_cmd, self.wheel_dofs)
 
 agent = Agent()
 agent.create()
@@ -104,5 +118,11 @@ agent.create()
 num = 1
 scene.build(n_envs=num, env_spacing=(0.5, 0.5))
 
+kp = np.zeros(len(agent.wheel_dofs), dtype=np.float64)
+kv = np.ones(len(agent.wheel_dofs), dtype=np.float64) * 100.0
+agent.agent.set_dofs_kp(kp=kp, dofs_idx_local=agent.wheel_dofs)
+agent.agent.set_dofs_kv(kv=kv, dofs_idx_local=agent.wheel_dofs)
+
 for i in range(100000):
+    agent.action(velocity=100.0)
     scene.step()
