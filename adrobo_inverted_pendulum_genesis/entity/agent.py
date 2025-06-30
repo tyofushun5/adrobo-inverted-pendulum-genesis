@@ -21,7 +21,7 @@ gs.init(
     debug = False,
     eps = 1e-12,
     logging_level = None,
-    backend = gs.cpu,
+    backend = gs.cuda,
     theme = 'dark',
     logger_verbose_time = False
 )
