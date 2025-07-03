@@ -10,120 +10,142 @@ import genesis as gs
 import torch
 
 from skrl.memories.torch import Memory
+from skrl.models.torch import Model
 from skrl.agents.torch import Agent
 from adrobo_inverted_pendulum_genesis.entity.entity import Robot
 
-
 script_dir = os.path.dirname(os.path.abspath(__file__))
-MJCF_dir = os.path.join(script_dir, 'MJCF')
-robot = os.path.join(MJCF_dir, 'inverted_pendulum.xml')
+robot = os.path.join(script_dir, 'MJCF', 'inverted_pendulum.xml')
 
-gs.init(
-    seed = None,
-    precision = '64',
-    debug = False,
-    eps = 1e-12,
-    logging_level = "warning",
-    backend = gs.cpu,
-    theme = 'dark',
-    logger_verbose_time = False
-)
 
-scene = gs.Scene(
-    sim_options=gs.options.SimOptions(
-        dt=0.01,
-        gravity=(0, 0, -9.81),
-    ),
-    show_viewer=True,
-    viewer_options=gs.options.ViewerOptions(
-        camera_pos=(3.5, 0.0, 2.5),
-        camera_lookat=(0.0, 0.0, 0.5),
-        camera_fov=40,
-    ),
-    vis_options=gs.options.VisOptions(
-        show_world_frame = True,
-        world_frame_size = 1.0,
-        show_link_frame = False,
-        show_cameras = False,
-        plane_reflection = True,
-        ambient_light = (0.1, 0.1, 0.1),
-    ),
-    renderer = gs.renderers.Rasterizer(),
-)
+CUSTOM_DEFAULT_CONFIG = {
+    "experiment": {
+        "directory": "",
+        "experiment_name": "inverted_pendulum",
+        "write_interval": 250,
+        "checkpoint_interval": 1000,
+        "store_separately": False,
+        "wandb": False,
+        "wandb_kwargs": {}
+    }
+}
 
-plane = scene.add_entity(gs.morphs.Plane())
+class InvertedPendulum(Agent):
 
-class Agent(Robot):
+    def __init__(self,
+                 models: Dict[str, Model],
+                 memory: Optional[Union[Memory, Tuple[Memory]]] = None,
+                 observation_space: Optional[Union[int, Tuple[int], gym.Space]] = None,
+                 action_space: Optional[Union[int, Tuple[int], gym.Space]] = None,
+                 device: Optional[Union[str, torch.device]] = None,
+                 cfg: Optional[dict] = None) -> None:
 
-    def __init__(self, create_position=None):
-        super().__init__()
-        if create_position is None:
-            create_position = [0.0, 0.0, 0.0]
-        self.cp = create_position
-        self.start_pos = None
-        self.default_ori = [0.0, 0.0, 0.0]
-        self.position = self.start_pos
-        self.agent = None
+        _cfg = copy.deepcopy(CUSTOM_DEFAULT_CONFIG)
+        _cfg.update(cfg if cfg is not None else {})
+        super().__init__(models=models,
+                         memory=memory,
+                         observation_space=observation_space,
+                         action_space=action_space,
+                         device=device,
+                         cfg=_cfg)
+
         self.wheel_joints = ["right_wheel", "left_wheel"]
         self.wheel_dofs = None
-        self.surfaces = gs.surfaces.Default(
-            color=(0.0, 0.0, 0.0),
-            opacity=1.0,
-            roughness=0.5,
-            metallic=0.0,
-            emissive=None
-        )
 
-    def create(self, position=None):
+    def init(self, trainer_cfg: Optional[Dict[str, Any]] = None) -> None:
 
-        self.position = position
+        super().init(trainer_cfg=trainer_cfg)
+        self.set_mode("eval")
 
-        if position is None:
-            self.position = self.start_pos
+    def act(self, states: torch.Tensor, timestep: int, timesteps: int) -> torch.Tensor:
+        """Process the environment's states to make a decision (actions) using the main policy
 
-        self.agent = scene.add_entity(
-            morph = gs.morphs.MJCF(
-                file=os.path.join(script_dir, robot),
-                # scale=1.0,
-                # pos=self.cp,
-                # euler=None,
-                convexify=False,
-                visualization=True,
-                collision=True,
-                requires_jac_and_IK=True,
-            ),
-            material=None,
-            surface=self.surfaces,
-            visualize_contact=False,
-            vis_mode="collision",
-        )
-        self.wheel_dofs = [
-            self.agent.get_joint(name).dof_idx_local
-            for name in self.wheel_joints
-        ]
+        :param states: Environment's states
+        :type states: torch.Tensor
+        :param timestep: Current timestep
+        :type timestep: int
+        :param timesteps: Number of timesteps
+        :type timesteps: int
 
-        return self.agent
+        :return: Actions
+        :rtype: torch.Tensor
+        """
+        # ======================================
+        # - sample random actions if required or
+        #   sample and return agent's actions
+        # ======================================
 
-    def action(self, velocity_right=0.0, velocity_left=0.0):
-        base = np.array([velocity_right, velocity_left], dtype=np.float64)
-        vel_cmd = np.tile(base, (scene.n_envs, 1))
-        self.agent.control_dofs_velocity(vel_cmd, self.wheel_dofs)
+    def record_transition(self,
+                          states: torch.Tensor,
+                          actions: torch.Tensor,
+                          rewards: torch.Tensor,
+                          next_states: torch.Tensor,
+                          terminated: torch.Tensor,
+                          truncated: torch.Tensor,
+                          infos: Any,
+                          timestep: int,
+                          timesteps: int) -> None:
+        """Record an environment transition in memory
 
+        :param states: Observations/states of the environment used to make the decision
+        :type states: torch.Tensor
+        :param actions: Actions taken by the agent
+        :type actions: torch.Tensor
+        :param rewards: Instant rewards achieved by the current actions
+        :type rewards: torch.Tensor
+        :param next_states: Next observations/states of the environment
+        :type next_states: torch.Tensor
+        :param terminated: Signals to indicate that episodes have terminated
+        :type terminated: torch.Tensor
+        :param truncated: Signals to indicate that episodes have been truncated
+        :type truncated: torch.Tensor
+        :param infos: Additional information about the environment
+        :type infos: Any type supported by the environment
+        :param timestep: Current timestep
+        :type timestep: int
+        :param timesteps: Number of timesteps
+        :type timesteps: int
+        """
+        super().record_transition(states, actions, rewards, next_states, terminated, truncated, infos, timestep, timesteps)
+        # ========================================
+        # - record agent's specific data in memory
+        # ========================================
 
+    def pre_interaction(self, timestep: int, timesteps: int) -> None:
+        """Callback called before the interaction with the environment
 
-agent = Agent()
-agent.create()
+        :param timestep: Current timestep
+        :type timestep: int
+        :param timesteps: Number of timesteps
+        :type timesteps: int
+        """
+        # =====================================
+        # - call `self.update(...)` if required
+        # =====================================
 
-num = 2
-scene.build(n_envs=num, env_spacing=(0.5, 0.5))
+    def post_interaction(self, timestep: int, timesteps: int) -> None:
+        """Callback called after the interaction with the environment
 
-kp = np.zeros(len(agent.wheel_dofs), dtype=np.float64)
-kv = np.ones(len(agent.wheel_dofs), dtype=np.float64) * 100.0
-agent.agent.set_dofs_kp(kp=kp, dofs_idx_local=agent.wheel_dofs)
-agent.agent.set_dofs_kv(kv=kv, dofs_idx_local=agent.wheel_dofs)
+        :param timestep: Current timestep
+        :type timestep: int
+        :param timesteps: Number of timesteps
+        :type timesteps: int
+        """
+        # =====================================
+        # - call `self.update(...)` if required
+        # =====================================
+        # call parent's method for checkpointing and TensorBoard writing
+        super().post_interaction(timestep, timesteps)
 
-print("wheel_dofs:", agent.wheel_dofs)
+    def _update(self, timestep: int, timesteps: int) -> None:
+        """Algorithm's main update step
 
-for i in range(100000):
-    agent.action(velocity_right=50.0, velocity_left=-50.0)
-    scene.step()
+        :param timestep: Current timestep
+        :type timestep: int
+        :param timesteps: Number of timesteps
+        :type timesteps: int
+        """
+        # ===================================================
+        # - implement algorithm's update step
+        # - record tracking data using `self.track_data(...)`
+        # ===================================================
