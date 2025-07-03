@@ -22,17 +22,17 @@
 
             <body pos="0.0702 -0.021 0.040293" euler="0 90 0">
                 <joint name="right_wheel" type="hinge" axis="0 0 1"/>
-                <geom type="mesh" mesh="wheel"/>
+                <geom name="right_wheel" type="mesh" mesh="wheel"/>
             </body>
 
             <body pos="-0.0702 -0.021 0.040293" euler="0 270 0">
                 <joint name="left_wheel" type="hinge" axis="0 0 1"/>
-                <geom type="mesh" mesh="wheel"/>
+                <geom name="left_wheel" type="mesh" mesh="wheel"/>
             </body>
 
             <body pos="0.0 0.014 0.035" euler="0 -90 0">
-                <joint type="hinge" axis="0 0 1" pos="0.0 0.006 0.0"/>
-                <geom type="mesh" mesh="pipe"/>
+                <joint name="pipe" type="hinge" axis="0 0 1" limited="true" range="-130 30" pos="0.0 0.006 0.0"/>
+                <geom name="pipe" type="mesh" mesh="pipe"/>
             </body>
 
             <body pos="0.0 -0.024 -0.045" euler="0 -90 0">
