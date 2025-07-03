@@ -1,11 +1,16 @@
 import abc
 import os
 import math
+from typing import Union, Tuple, Dict, Any, Optional
 
 import numpy as np
+import gymnasium as gym
+import copy
 import genesis as gs
 import torch
 
+from skrl.memories.torch import Memory
+from skrl.agents.torch import Agent
 from adrobo_inverted_pendulum_genesis.entity.entity import Robot
 
 
@@ -19,7 +24,7 @@ gs.init(
     debug = False,
     eps = 1e-12,
     logging_level = "warning",
-    backend = gs.cuda,
+    backend = gs.cpu,
     theme = 'dark',
     logger_verbose_time = False
 )
@@ -27,7 +32,7 @@ gs.init(
 scene = gs.Scene(
     sim_options=gs.options.SimOptions(
         dt=0.01,
-        gravity=(0, 0, -9.806),
+        gravity=(0, 0, -9.81),
     ),
     show_viewer=True,
     viewer_options=gs.options.ViewerOptions(
@@ -100,14 +105,16 @@ class Agent(Robot):
         return self.agent
 
     def action(self, velocity_right=0.0, velocity_left=0.0):
-        vel_cmd = np.array([velocity_right, velocity_left], dtype=np.float64)
+        base = np.array([velocity_right, velocity_left], dtype=np.float64)
+        vel_cmd = np.tile(base, (scene.n_envs, 1))
         self.agent.control_dofs_velocity(vel_cmd, self.wheel_dofs)
+
 
 
 agent = Agent()
 agent.create()
 
-num = 10
+num = 2
 scene.build(n_envs=num, env_spacing=(0.5, 0.5))
 
 kp = np.zeros(len(agent.wheel_dofs), dtype=np.float64)
