@@ -58,7 +58,9 @@ class InvertedPendulum(Robot):
         super().__init__()
         self.agent = None
         self.wheel_joints = ["right_wheel", "left_wheel"]
+        self.pipe_joints = ["pipe"]
         self.wheel_dofs = None
+        self.pipe_dof = None
         self.scene = scene
         self.surfaces = gs.surfaces.Default(
             color=(0.0, 0.0, 0.0),
@@ -91,12 +93,23 @@ class InvertedPendulum(Robot):
             for name in self.wheel_joints
         ]
 
+        pipe_joint = self.agent.get_joint("pipe")
+        self.pipe_dof = pipe_joint.dof_idx_local
+
         return self.agent
 
     def action(self, velocity_right=0.0, velocity_left=0.0):
         base = np.array([velocity_right, velocity_left], dtype=np.float64)
         vel_cmd = np.tile(base, (self.scene.n_envs, 1))
         self.agent.control_dofs_velocity(vel_cmd, self.wheel_dofs)
+
+    def read_inverted_degree(self):
+        """
+        Read the inverted degrees of the pendulum.
+        """
+        angle_rad = self.agent.get_dofs_position([self.pipe_dof])[0]
+        angle_deg = angle_rad * 180 / math.pi
+        return float(angle_deg)
 
 
 
@@ -111,8 +124,10 @@ kv = np.ones(len(agent.wheel_dofs), dtype=np.float64) * 100.0
 agent.agent.set_dofs_kp(kp=kp, dofs_idx_local=agent.wheel_dofs)
 agent.agent.set_dofs_kv(kv=kv, dofs_idx_local=agent.wheel_dofs)
 
-print("wheel_dofs:", agent.wheel_dofs)
+# print("wheel_dofs:", agent.wheel_dofs)
+# print(agent.pipe_dof)
 
 for i in range(100000):
-    agent.action(velocity_right=-10.0, velocity_left=10.0)
+    agent.action(velocity_right=-5.0, velocity_left=5.0)
+    print(agent.read_inverted_rad())
     scene.step()
