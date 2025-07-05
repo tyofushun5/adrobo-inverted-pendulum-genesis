@@ -10,7 +10,7 @@ from skrl.trainers.torch import SequentialTrainer
 from adrobo_inverted_pendulum_genesis.environment.environment import Environment
 
 # ───── 1. ENV
-vec_env = Environment(num_envs=1, max_steps=10_000)
+vec_env = Environment(num_envs=5, max_steps=10_000)
 env     = wrap_env(vec_env)
 device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

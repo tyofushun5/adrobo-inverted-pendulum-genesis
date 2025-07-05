@@ -64,12 +64,12 @@ class InvertedPendulum(Robot):
 
         return self.agent
 
-    def action(self, vel_r, vel_l):
+    def action(self, vel_r, vel_l, envs_idx=None):
         vel_cmd = np.stack([vel_r, vel_l], axis=1)
         self.agent.control_dofs_velocity(
             vel_cmd,
             self.wheel_dofs,
-            envs_idx=None
+            envs_idx=envs_idx
         )
 
     def read_inverted_degree(self, env_ids=None):

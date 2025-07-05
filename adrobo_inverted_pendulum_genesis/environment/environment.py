@@ -89,7 +89,7 @@ class Environment(VectorEnv):
         self.reward_function = RewardFunction()
         self.calculation_tool = CalculationTool()
 
-        self.scene.build(n_envs=self.num_envs, env_spacing=(0.5, 0.5))
+        self.scene.build(n_envs=self.num_envs, env_spacing=(2.0, 2.0))
 
         self.reset()
 
@@ -115,7 +115,7 @@ class Environment(VectorEnv):
         info = {}
 
         # 1 シミュレーション step
-        self.inverted_pendulum.action(action[:, 0], action[:, 1])
+        self.inverted_pendulum.action(action[:, 0], action[:, 1], envs_idx=np.arange(self.num_envs))
         self.scene.step(10)
 
         # 観測
