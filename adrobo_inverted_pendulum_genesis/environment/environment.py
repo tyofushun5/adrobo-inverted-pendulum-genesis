@@ -1,15 +1,22 @@
 import numpy as np
 import gymnasium as gym
+from gymnasium.vector import VectorEnv
 from gymnasium import spaces
+import torch
 import genesis as gs
 
 from adrobo_inverted_pendulum_genesis.entity.inverted_pendulum import InvertedPendulum
 from adrobo_inverted_pendulum_genesis.reward_function.reward_function import RewardFunction
 from adrobo_inverted_pendulum_genesis.tools.calculation_tools import CalculationTool
 
-class Environment(gym.Env):
-    def __init__(self, max_steps: int):
-        super().__init__()
+
+class Environment(VectorEnv):
+    def __init__(self, num_envs=1, max_steps=1000):
+
+        self.max_steps = max_steps
+        self.step_count = np.zeros(num_envs, dtype=np.int32)
+        self.prev_inverted_degree = np.zeros(num_envs, np.float32)
+        self.num_envs = num_envs
 
         gs.init(
             seed = None,
@@ -46,64 +53,100 @@ class Environment(gym.Env):
 
         self.plane = self.scene.add_entity(gs.morphs.Plane())
 
-        self.action_space = spaces.Box(
+        self.single_action_space = spaces.Box(
             low=np.array([-1.0, -1.0], dtype=np.float32),
             high=np.array([1.0, 1.0], dtype=np.float32),
             dtype=np.float32
         )
 
-        self.observation_space = spaces.Box(low=-1.0,
-                                            high=1.0,
-                                            shape=(1,),
-                                            dtype=np.float32)
+        self.single_observation_space = spaces.Box(
+            low=-1.0,
+            high=1.0,
+            shape=(1,),
+            dtype=np.float32
+        )
+
+        # self.action_space = spaces.Box(
+        #     low=np.array([-1.0, -1.0], dtype=np.float32),
+        #     high=np.array([1.0, 1.0], dtype=np.float32),
+        #     shape=(self.num_envs, 2),
+        #     dtype=np.float32
+        # )
+        #
+        # self.observation_space = spaces.Box(
+        #     low=-1.0,
+        #     high=1.0,
+        #     shape=(self.num_envs, 1),
+        #     dtype=np.float32
+        # )
+
+        super().__init__()
 
         self.max_steps = max_steps
-        self.step_count = 0
-        self.prev_inverted_degree = 0.0
 
-        self.inverted_pendulum = InvertedPendulum(self.scene)
+        self.inverted_pendulum = InvertedPendulum(self.scene, num_envs=self.num_envs)
         self.inverted_pendulum.create()
         self.reward_function = RewardFunction()
         self.calculation_tool = CalculationTool()
 
+        self.scene.build(n_envs=self.num_envs, env_spacing=(0.5, 0.5))
+
         self.reset()
 
-        num = 2
-        self.scene.build(n_envs=num, env_spacing=(0.5, 0.5))
+
+    def reset(self, *, seed=None, options=None):
+        super().reset(seed=seed)
+        self.step_count[:] = 0
+        self.prev_inverted_degree[:] = 0.0
+
+        self.scene.reset()
+
+        obs = np.zeros((self.num_envs, 1), dtype=np.float32)
+        infos = {}
+        return obs, infos
+
+    def reset_idx(self, env_ids):
+        self.inverted_pendulum.reset(env_idx=env_ids)
 
 
     def step(self, action):
-        terminated = False
-        truncated = False
+        terminated = np.zeros(self.num_envs, dtype=np.bool_)
+        truncated  = np.zeros(self.num_envs, dtype=np.bool_)
         info = {}
 
-        self.step_count += 1
+        # 1 シミュレーション step
+        self.inverted_pendulum.action(action[:, 0], action[:, 1])
+        self.scene.step(10)
 
-        self.inverted_pendulum.action(velocity_right=action[0], velocity_left=action[1])
+        # 観測
+        inv_deg = self.inverted_pendulum.read_inverted_degree()                # shape=(N,)
+        inv_vel = (inv_deg - self.prev_inverted_degree) / 0.01                 # shape=(N,)
+        self.prev_inverted_degree[:] = inv_deg
+        self.step_count += 1                                                   # shape=(N,)
 
-        for _ in range(10):
-            self.scene.step()
+        observation = self.calculation_tool.normalization_inverted_degree(inv_deg).reshape(self.num_envs, 1)
 
-        inverted_degree = self.inverted_pendulum.read_inverted_degree()
-        self.prev_inverted_degree = inverted_degree
-        theta_vel = (inverted_degree - self.prev_inverted_degree) / 0.01
+        # 報酬
+        reward = self.reward_function.calculate_reward(inv_deg, inv_vel, action)
+        if isinstance(reward, torch.Tensor):
+            reward = reward.cpu().numpy()                                      # shape=(N,)
 
-        observation = self.calculation_tool.normalization_inverted_degree(inverted_degree)
+        # 終了判定
+        step_timeout_mask = self.step_count >= self.max_steps                  # ndarray(bool)
+        angle_fail_mask   = np.logical_or(inv_deg <= -100.0, inv_deg >= 30.0)  # ndarray(bool)
+        terminated = np.logical_or(step_timeout_mask, angle_fail_mask)         # ndarray(bool)
 
-        reward = self.reward_function.calculate_reward(theta=inverted_degree, theta_vel=theta_vel, action=action)
+        # タイムアウトは truncated 扱い
+        truncated[:] = step_timeout_mask
 
-        if self.step_count >= self.max_steps:
-            terminated = True
-
-        if inverted_degree <= -130 or inverted_degree >= 30:
-            terminated = True
+        # リセット
+        done_ids = np.where(terminated)[0]
+        if done_ids.size > 0:
+            self.reset_idx(done_ids)
 
         return observation, reward, terminated, truncated, info
 
-    def reset(self, seed=None, options=None):
-        initial_observation = np.array([0.0], dtype=np.float32)
-        info = {}
-        return initial_observation, info
+
 
     def render(self):
         pass

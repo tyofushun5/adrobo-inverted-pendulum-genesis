@@ -17,44 +17,10 @@ from adrobo_inverted_pendulum_genesis.entity.entity import Robot
 script_dir = os.path.dirname(os.path.abspath(__file__))
 robot = os.path.join(script_dir, 'MJCF', 'inverted_pendulum.xml')
 
-gs.init(
-    seed = None,
-    precision = '64',
-    debug = False,
-    eps = 1e-12,
-    logging_level = "warning",
-    backend = gs.cpu,
-    theme = 'dark',
-    logger_verbose_time = False
-)
-
-scene = gs.Scene(
-    sim_options=gs.options.SimOptions(
-        dt=0.01,
-        gravity=(0, 0, -9.81),
-    ),
-    show_viewer=True,
-    viewer_options=gs.options.ViewerOptions(
-        camera_pos=(3.5, 0.0, 2.5),
-        camera_lookat=(0.0, 0.0, 0.5),
-        camera_fov=40,
-    ),
-    vis_options=gs.options.VisOptions(
-        show_world_frame = True,
-        world_frame_size = 1.0,
-        show_link_frame = False,
-        show_cameras = False,
-        plane_reflection = True,
-        ambient_light = (0.1, 0.1, 0.1),
-    ),
-    renderer = gs.renderers.Rasterizer(),
-)
-
-plane = scene.add_entity(gs.morphs.Plane())
 
 class InvertedPendulum(Robot):
 
-    def __init__(self, scene: gs.Scene = None):
+    def __init__(self, scene: gs.Scene = None, num_envs: int = 1):
         super().__init__()
         self.agent = None
         self.wheel_joints = ["right_wheel", "left_wheel"]
@@ -98,36 +64,39 @@ class InvertedPendulum(Robot):
 
         return self.agent
 
-    def action(self, velocity_right=0.0, velocity_left=0.0):
-        base = np.array([velocity_right, velocity_left], dtype=np.float64)
-        vel_cmd = np.tile(base, (self.scene.n_envs, 1))
-        self.agent.control_dofs_velocity(vel_cmd, self.wheel_dofs)
+    def action(self, vel_r, vel_l):
+        vel_cmd = np.stack([vel_r, vel_l], axis=1)
+        self.agent.control_dofs_velocity(
+            vel_cmd,
+            self.wheel_dofs,
+            envs_idx=None
+        )
 
-    def read_inverted_degree(self):
-        """
-        Read the inverted degrees of the pendulum.
-        """
-        angle_rad = self.agent.get_dofs_position([self.pipe_dof])[0]
-        angle_deg = angle_rad * 180 / math.pi
-        return float(angle_deg)
+    def read_inverted_degree(self, env_ids=None):
+        # env_ids が None なら全環境
+        if env_ids is None:
+            env_ids = np.arange(self.scene.n_envs)
+        rad = self.agent.get_dofs_position([self.pipe_dof], envs_idx=env_ids)  # shape (N, 1)
+        deg = rad * 180 / math.pi                                              # ndarray / tensor
+        return deg.squeeze(-1)   # shape (N,)  ベクトルで返す
 
 
+    def reset(self, env_idx):
+        env_idx = np.asarray(env_idx, dtype=np.int32)
 
-agent = InvertedPendulum(scene)
-agent.create()
+        # 1) 角度を 0 に戻す ―― 形状 (n_env, 1) にする
+        zeros = np.zeros((len(env_idx), 1), dtype=np.float64)
+        self.agent.set_dofs_position(
+            zeros,                   # position  shape = (n_env, 1)
+            [self.pipe_dof],         # dofs_idx  length = 1
+            zero_velocity=True,
+            envs_idx=env_idx.tolist()
+        )
 
-num = 2
-scene.build(n_envs=num, env_spacing=(0.5, 0.5))
 
-kp = np.zeros(len(agent.wheel_dofs), dtype=np.float64)
-kv = np.ones(len(agent.wheel_dofs), dtype=np.float64) * 100.0
-agent.agent.set_dofs_kp(kp=kp, dofs_idx_local=agent.wheel_dofs)
-agent.agent.set_dofs_kv(kv=kv, dofs_idx_local=agent.wheel_dofs)
+        self.agent.set_dofs_velocity(
+            zeros,
+            [self.pipe_dof],
+            envs_idx=env_idx.tolist()
+        )
 
-# print("wheel_dofs:", agent.wheel_dofs)
-# print(agent.pipe_dof)
-
-for i in range(100000):
-    agent.action(velocity_right=-5.0, velocity_left=5.0)
-    print(agent.read_inverted_rad())
-    scene.step()
