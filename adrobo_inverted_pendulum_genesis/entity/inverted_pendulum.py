@@ -73,26 +73,30 @@ class InvertedPendulum(Robot):
         )
 
     def read_inverted_degree(self, env_ids=None):
-        # env_ids が None なら全環境
         if env_ids is None:
             env_ids = np.arange(self.scene.n_envs)
-        rad = self.agent.get_dofs_position([self.pipe_dof], envs_idx=env_ids)  # shape (N, 1)
-        deg = rad * 180 / math.pi                                              # ndarray / tensor
-        return deg.squeeze(-1)   # shape (N,)  ベクトルで返す
+        rad = self.agent.get_dofs_position([self.pipe_dof], envs_idx=env_ids)
+        deg = rad * 180 / math.pi
+        return deg.squeeze(-1)
 
 
     def reset(self, env_idx):
         env_idx = np.asarray(env_idx, dtype=np.int32)
+        n = len(env_idx)
 
-        # 1) 角度を 0 に戻す ―― 形状 (n_env, 1) にする
+        pos  = np.tile([0.0, 0.0, 0.0], (n, 1))
+        quat = np.tile([1.0, 1.0, 0.0, 0.0], (n, 1))
+
+        self.agent.set_pos(pos,  envs_idx=env_idx.tolist())
+        self.agent.set_quat(quat, envs_idx=env_idx.tolist())
+
         zeros = np.zeros((len(env_idx), 1), dtype=np.float64)
         self.agent.set_dofs_position(
-            zeros,                   # position  shape = (n_env, 1)
-            [self.pipe_dof],         # dofs_idx  length = 1
+            zeros,
+            [self.pipe_dof],
             zero_velocity=True,
             envs_idx=env_idx.tolist()
         )
-
 
         self.agent.set_dofs_velocity(
             zeros,

@@ -1,6 +1,5 @@
-# train.py  (skrl 1.6, Gymnasium 1.2, Torch 2.x)
-
-import os, torch
+import os
+import torch
 from skrl.envs.wrappers.torch import wrap_env
 from skrl.memories.torch import RandomMemory
 from skrl.utils.model_instantiators.torch import gaussian_model, deterministic_model
@@ -9,8 +8,8 @@ from skrl.trainers.torch import SequentialTrainer
 
 from adrobo_inverted_pendulum_genesis.environment.environment import Environment
 
-# ───── 1. ENV
-vec_env = Environment(num_envs=5, max_steps=10_000)
+
+vec_env = Environment(num_envs=3, max_steps=1000, show_viewer=True)
 env     = wrap_env(vec_env)
 device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -32,12 +31,10 @@ value  = deterministic_model(env.observation_space, None,
 
 models  = {"policy": policy, "value": value}
 
-# ───── 3. MEMORY
 memory = RandomMemory(memory_size=2048,
                       num_envs=env.num_envs,
                       device=device)
 
-# ───── 4. AGENT
 cfg = PPO_DEFAULT_CONFIG.copy()
 cfg.update({
     "rollouts":        2048 // env.num_envs,
@@ -56,10 +53,9 @@ agent = PPO(models=models, memory=memory,
 
 # ───── 5. TRAIN
 trainer = SequentialTrainer(env=env, agents=agent,
-                            cfg={"timesteps": 5_000_000, "headless": True})
+                            cfg={"timesteps": 5000000, "headless": True})
 trainer.train()
 
-# ───── 6. SAVE
 os.makedirs("model", exist_ok=True)
 torch.save(policy.state_dict(), "model/default_model_v10.pt")
 env.close()
