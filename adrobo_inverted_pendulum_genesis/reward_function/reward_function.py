@@ -1,7 +1,7 @@
 import numpy as np
 
 class RewardFunction:
-    def __init__(self, w1=1.0, w2=0.1, w3=0.001):
+    def __init__(self, w1=1.0, w2=0.1, w3=0.0001):
         self.w1, self.w2, self.w3 = w1, w2, w3
 
     def calculate_reward(self, theta, theta_vel, action):

@@ -66,7 +66,7 @@ class Environment(VectorEnv):
         self.prev_inverted_degree = np.zeros(num_envs, np.float32)
         self.num_envs = num_envs
         self.env_ids = np.arange(self.num_envs)
-        self.substeps = 20
+        self.substeps = 10
 
         self.inverted_pendulum = InvertedPendulum(self.scene, num_envs=self.num_envs)
         self.inverted_pendulum.create()
@@ -112,22 +112,20 @@ class Environment(VectorEnv):
 
         observation = self.calculation_tool.normalization_inverted_degree(inv_deg).reshape(self.num_envs, 1)
 
-        reward = self.reward_function.calculate_reward(inv_deg, inv_vel, action)
-        print(reward)
+        reward = self.reward_function.calculate_reward(inv_deg, inv_vel, action) + self.step_count
 
         step_timeout = self.step_count >= self.max_steps
         angle_fail   = np.logical_or(inv_deg <= -100.0, inv_deg >= 30.0)
-        terminated = np.logical_or(step_timeout, angle_fail)
 
         truncated[:] = step_timeout
 
-        done_ids = np.where(terminated)[0]
-        if done_ids.size > 0:
+        terminated[:] = angle_fail
+
+        done_ids = np.where(np.logical_or(terminated, truncated))[0]
+        if done_ids.size:
             self.reset_idx(done_ids)
 
         return observation, reward, terminated, truncated, infos
-
-
 
     def render(self):
         pass

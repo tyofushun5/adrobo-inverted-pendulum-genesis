@@ -9,11 +9,11 @@ from skrl.trainers.torch import SequentialTrainer
 from adrobo_inverted_pendulum_genesis.environment.environment import Environment
 
 
-vec_env = Environment(num_envs=3, max_steps=1000, show_viewer=True)
+vec_env = Environment(num_envs=1, max_steps=1000, show_viewer=True)
 env     = wrap_env(vec_env)
 device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# ───── 2. MODELS
+
 hid_layers = [{"name": "mlp",
                "input": "OBSERVATIONS",
                "layers": [256, 256, 256],
@@ -21,13 +21,13 @@ hid_layers = [{"name": "mlp",
 
 policy = gaussian_model(env.observation_space, env.action_space,
                         device=device, clip_actions=True,
-                        network=hid_layers,           # 中間層のみ
-                        output="ACTIONS")             # ← 重要！:contentReference[oaicite:3]{index=3}
+                        network=hid_layers,
+                        output="ACTIONS")
 
 value  = deterministic_model(env.observation_space, None,
                              device=device,
                              network=hid_layers,
-                             output="ONE")            # ← スカラー出力:contentReference[oaicite:4]{index=4}
+                             output="ONE")
 
 models  = {"policy": policy, "value": value}
 
