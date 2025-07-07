@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f552430-08e4-4a9c-898f-2869f0638298" name="変更" comment="7/6 commit 2">
+    <list default="true" id="6f552430-08e4-4a9c-898f-2869f0638298" name="変更" comment="7/7 commit 3">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity/MJCF/inverted_pendulum.xml" beforeDir="false" afterPath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity/MJCF/inverted_pendulum.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity/inverted_pendulum.py" beforeDir="false" afterPath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity/inverted_pendulum.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/environment/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/environment/environment.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/reward_function/reward_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/reward_function/reward_function.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,27 +53,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.agent.executor&quot;: &quot;Run&quot;,
-    &quot;Python.environment.executor&quot;: &quot;Run&quot;,
-    &quot;Python.inverted_pendulum.executor&quot;: &quot;Run&quot;,
-    &quot;Python.train.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/shun/PycharmProjects/InvertedPendulum/adrobo_inverted_pendulum_genesis/entity/MJCF&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.LLMThirdPartyAiProvidersConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.agent.executor": "Run",
+    "Python.environment.executor": "Run",
+    "Python.inverted_pendulum.executor": "Run",
+    "Python.train.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/shun/PycharmProjects/InvertedPendulum/adrobo_inverted_pendulum_genesis/entity/MJCF",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity/MJCF" />
@@ -137,7 +142,8 @@
       <workItem from="1751642376687" duration="1484000" />
       <workItem from="1751645915142" duration="14565000" />
       <workItem from="1751702672955" duration="12641000" />
-      <workItem from="1751725062033" duration="20893000" />
+      <workItem from="1751725062033" duration="41515000" />
+      <workItem from="1751878771809" duration="21407000" />
     </task>
     <task id="LOCAL-00001" summary="6/30 commit">
       <option name="closed" value="true" />
@@ -203,7 +209,31 @@
       <option name="project" value="LOCAL" />
       <updated>1751744357781</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="7/7 commit">
+      <option name="closed" value="true" />
+      <created>1751823710111</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1751823710111</updated>
+    </task>
+    <task id="LOCAL-00010" summary="7/7 commit 2">
+      <option name="closed" value="true" />
+      <created>1751860645945</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1751860645945</updated>
+    </task>
+    <task id="LOCAL-00011" summary="7/7 commit 3">
+      <option name="closed" value="true" />
+      <created>1751865835003</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1751865835003</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -229,12 +259,15 @@
     <MESSAGE value="7/5 commit" />
     <MESSAGE value="7/6 commit" />
     <MESSAGE value="7/6 commit 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="7/6 commit 2" />
+    <MESSAGE value="7/7 commit" />
+    <MESSAGE value="7/7 commit 2" />
+    <MESSAGE value="7/7 commit 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="7/7 commit 3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/InvertedPendulum$inverted_pendulum.coverage" NAME="inverted_pendulum のカバレッジ結果" MODIFIED="1751740901134" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity" />
-    <SUITE FILE_PATH="coverage/InvertedPendulum$environment.coverage" NAME="environment のカバレッジ結果" MODIFIED="1751742805820" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/environment" />
-    <SUITE FILE_PATH="coverage/InvertedPendulum$train.coverage" NAME="train のカバレッジ結果" MODIFIED="1751774497146" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
+    <SUITE FILE_PATH="coverage/InvertedPendulum$inverted_pendulum.coverage" NAME="inverted_pendulum のカバレッジ結果" MODIFIED="1751823604189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity" />
+    <SUITE FILE_PATH="coverage/InvertedPendulum$environment.coverage" NAME="environment のカバレッジ結果" MODIFIED="1751883436352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/environment" />
+    <SUITE FILE_PATH="coverage/InvertedPendulum$train.coverage" NAME="train のカバレッジ結果" MODIFIED="1751907155993" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
     <SUITE FILE_PATH="coverage/InvertedPendulum$agent.coverage" NAME="agent のカバレッジ結果" MODIFIED="1751545440836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity" />
     <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$agent.coverage" NAME="agent のカバレッジ結果" MODIFIED="1751290354905" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity" />
   </component>

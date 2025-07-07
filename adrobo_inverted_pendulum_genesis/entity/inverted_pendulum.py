@@ -42,7 +42,7 @@ class InvertedPendulum(Robot):
             morph = gs.morphs.MJCF(
                 file=os.path.join(script_dir, robot),
                 # scale=1.0,
-                # pos=self.cp,
+                # pos=(0.0, 0.0, 0.0),
                 # euler=None,
                 convexify=False,
                 visualization=True,
@@ -64,14 +64,23 @@ class InvertedPendulum(Robot):
 
         return self.agent
 
-    def action(self, vel_r, vel_l, envs_idx=None):
-        print(vel_r)
-        vel_cmd = np.stack([vel_r*2, vel_l*2], axis=1)
-        self.agent.control_dofs_velocity(
-            vel_cmd,
-            self.wheel_dofs,
-            envs_idx=envs_idx
-        )
+    # def action(self, vel_r, vel_l, envs_idx=None):
+    #     vel_cmd = np.stack([vel_r*2, vel_l*2], axis=1)
+    #     self.agent.control_dofs_velocity(
+    #         vel_cmd,
+    #         self.wheel_dofs,
+    #         envs_idx=envs_idx
+    #     )
+
+    def action(self, velocity_right, velocity_left, envs_idx=None):
+        vel_cmd = np.stack([velocity_right*5, velocity_left*-5], axis=1).astype(np.float64)
+
+        if envs_idx is not None:
+            idx = np.r_[envs_idx].tolist()
+            vel_cmd = vel_cmd[idx]
+
+        self.agent.control_dofs_velocity(vel_cmd, self.wheel_dofs, envs_idx)
+
 
     def read_inverted_degree(self, env_ids=None):
         if env_ids is None:
@@ -83,17 +92,15 @@ class InvertedPendulum(Robot):
 
     def reset(self, env_idx):
         env_idx = np.asarray(env_idx, dtype=np.int32)
-        n = len(env_idx)
+        num_envs = len(env_idx)
 
-        # pos  = np.tile([0.0, 0.0, 0.0], (n, 1))
-        # quat = np.tile([1.0, 1.0, 0.0, 0.0], (n, 1))
+        # x_offsets = np.linspace(-1.0, 1.0, num_envs)
+        # pos = np.stack([x_offsets, np.zeros(num_envs), np.full(num_envs, 0.1)], axis=1)
         #
-        # self.agent.set_pos(pos,  envs_idx=env_idx.tolist())
-        # self.agent.set_quat(quat, envs_idx=env_idx.tolist())
+        # self.agent.set_pos(pos, envs_idx=env_idx.tolist())
 
-        zeros = np.zeros((len(env_idx), 1), dtype=np.float64)
-        zeros_wheel = np.zeros((n, len(self.wheel_dofs)), dtype=np.float64)
-
+        zeros = np.zeros((num_envs, 1), dtype=np.float64)
+        zeros_wheel = np.zeros((num_envs, len(self.wheel_dofs)), dtype=np.float64)
 
         self.agent.set_dofs_position(
             zeros_wheel,
