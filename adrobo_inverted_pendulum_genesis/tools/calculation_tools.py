@@ -11,3 +11,7 @@ class CalculationTool(object):
         value = np.asarray(value, dtype=np.float32)
         value = np.clip(value, low, high)
         return 2 * (value - low) / (high - low) - 1
+
+    @staticmethod
+    def to_env_list(idx):
+        return None if idx is None else np.atleast_1d(idx).astype(np.int32).tolist()

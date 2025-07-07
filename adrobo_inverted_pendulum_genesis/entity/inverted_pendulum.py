@@ -65,6 +65,7 @@ class InvertedPendulum(Robot):
         return self.agent
 
     def action(self, vel_r, vel_l, envs_idx=None):
+        print(vel_r)
         vel_cmd = np.stack([vel_r*2, vel_l*2], axis=1)
         self.agent.control_dofs_velocity(
             vel_cmd,
@@ -91,6 +92,22 @@ class InvertedPendulum(Robot):
         # self.agent.set_quat(quat, envs_idx=env_idx.tolist())
 
         zeros = np.zeros((len(env_idx), 1), dtype=np.float64)
+        zeros_wheel = np.zeros((n, len(self.wheel_dofs)), dtype=np.float64)
+
+
+        self.agent.set_dofs_position(
+            zeros_wheel,
+            self.wheel_dofs,
+            zero_velocity=True,
+            envs_idx=env_idx.tolist()
+        )
+
+        self.agent.set_dofs_velocity(
+            zeros_wheel,
+            self.wheel_dofs,
+            envs_idx=env_idx.tolist()
+)
+
         self.agent.set_dofs_position(
             zeros,
             [self.pipe_dof],
