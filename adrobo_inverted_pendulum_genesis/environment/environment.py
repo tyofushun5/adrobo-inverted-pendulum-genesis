@@ -12,7 +12,7 @@ class Environment(VectorEnv):
     def __init__(self, num_envs=1, max_steps=1000, show_viewer=False):
         gs.init(
             seed = None,
-            precision = '32',
+            precision = '64',
             debug = False,
             eps = 1e-12,
             logging_level = "warning",

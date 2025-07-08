@@ -9,13 +9,18 @@ from skrl.memories.torch import RandomMemory
 from skrl.models.torch import DeterministicMixin, GaussianMixin, Model
 from skrl.resources.preprocessors.torch import RunningStandardScaler
 from skrl.resources.schedulers.torch import KLAdaptiveRL
-from skrl.trainers.torch import SequentialTrainer
+from skrl.trainers.torch import ParallelTrainer
 from skrl.utils import set_seed
 
 from adrobo_inverted_pendulum_genesis.environment.environment import Environment
 
 
-set_seed()
+script_dir = os.path.dirname(__file__)
+parent_dir = os.path.dirname(script_dir)
+save_dir = os.path.join(parent_dir, 'model','default_model')
+os.makedirs(save_dir, exist_ok=True)
+
+set_seed(0)
 
 class Policy(GaussianMixin, Model):
     def __init__(self, observation_space, action_space, device, clip_actions=False,
@@ -49,7 +54,7 @@ class Value(DeterministicMixin, Model):
         return self.net(inputs["states"]), {}
 
 
-vec_env = Environment(num_envs=5, max_steps=2000, show_viewer=True)
+vec_env = Environment(num_envs=20, max_steps=2000, show_viewer=False)
 env     = wrap_env(vec_env)
 # device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device = env.device
@@ -61,30 +66,39 @@ models["policy"] = Policy(env.observation_space, env.action_space, device, clip_
 models["value"] = Value(env.observation_space, env.action_space, device)
 
 cfg = PPO_DEFAULT_CONFIG.copy()
-cfg["rollouts"] = 1024  # memory_size
-cfg["learning_epochs"] = 10
-cfg["mini_batches"] = 32
-cfg["discount_factor"] = 0.9
+cfg["rollouts"] = 1024
+cfg["learning_epochs"] = 8
+cfg["mini_batches"] = 1024
+
+cfg["discount_factor"] = 0.99
 cfg["lambda"] = 0.95
-cfg["learning_rate"] = 1e-3
+
+cfg["learning_rate"] = 3e-4
 cfg["learning_rate_scheduler"] = KLAdaptiveRL
 cfg["learning_rate_scheduler_kwargs"] = {"kl_threshold": 0.008}
+
 cfg["grad_norm_clip"] = 0.5
 cfg["ratio_clip"] = 0.2
 cfg["value_clip"] = 0.2
 cfg["clip_predicted_values"] = False
+
 cfg["entropy_loss_scale"] = 0.0
 cfg["value_loss_scale"] = 0.5
+
 cfg["kl_threshold"] = 0
+
 cfg["mixed_precision"] = True
 cfg["state_preprocessor"] = RunningStandardScaler
 cfg["state_preprocessor_kwargs"] = {"size": env.observation_space, "device": device}
 cfg["value_preprocessor"] = RunningStandardScaler
 cfg["value_preprocessor_kwargs"] = {"size": 1, "device": device}
-# logging to TensorBoard and write checkpoints (in timesteps)
-cfg["experiment"]["write_interval"] = 500
-cfg["experiment"]["checkpoint_interval"] = 5000
-cfg["experiment"]["directory"] = "runs/torch/Pendulum"
+
+cfg["experiment"]["directory"] = "../model"
+cfg["experiment"]["experiment_name"] = "inverted_pendulum"
+cfg["experiment"]["write_interval"] = 1000
+cfg["experiment"]["checkpoint_interval"] = 1000
+cfg["experiment"]["store_separately"] = False
+
 
 agent = PPO(models=models,
             memory=memory,
@@ -94,10 +108,11 @@ agent = PPO(models=models,
             device=device)
 
 cfg_trainer = {"timesteps": 100000, "headless": True}
-trainer = SequentialTrainer(cfg=cfg_trainer, env=env, agents=[agent])
+trainer = ParallelTrainer(cfg=cfg_trainer, env=env, agents=[agent])
 
 trainer.train()
+# trainer.eval()
 
-# os.makedirs("model", exist_ok=True)
-# torch.save(policy.state_dict(), "model/default_model_v10.pt")
+#
+# models["policy"].save(os.path.join(save_dir, 'model_v10'))
 env.close()
