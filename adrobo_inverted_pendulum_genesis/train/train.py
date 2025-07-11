@@ -107,12 +107,38 @@ agent = PPO(models=models,
             action_space=env.action_space,
             device=device)
 
-cfg_trainer = {"timesteps": 100000, "headless": True}
+cfg_trainer = {"timesteps": 1000, "headless": True}
 trainer = ParallelTrainer(cfg=cfg_trainer, env=env, agents=[agent])
 
-trainer.train()
-# trainer.eval()
 
-#
-# models["policy"].save(os.path.join(save_dir, 'model_v10'))
+trainer.train()
+
 env.close()
+
+from pathlib import Path
+
+scaler = agent._state_preprocessor.to("cpu")   # <= ここを修正
+policy = models["policy"].to("cpu").eval()
+
+class PolicyWithScaler(nn.Module):
+    def __init__(self, scaler, net):
+        super().__init__()
+        self.scaler, self.net = scaler, net
+    def forward(self, x):
+        x = self.scaler(x, train=False, no_grad=True)
+        mu, log_std, _ = self.net({"states": x}, role="policy")
+        return mu, log_std
+
+wrapper = PolicyWithScaler(scaler, policy)
+dummy = torch.zeros(1, *env.single_observation_space.shape)
+
+torch.onnx.export(
+    wrapper, dummy, "policy.onnx",
+    input_names=["obs"],
+    output_names=["action_mu", "action_log_std"],
+    dynamic_axes={"obs": {0: "batch"},
+                  "action_mu": {0: "batch"},
+                  "action_log_std": {0: "batch"}},
+    opset_version=18
+)
+
