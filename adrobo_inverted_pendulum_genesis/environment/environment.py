@@ -2,6 +2,7 @@ import numpy as np
 from gymnasium.vector import VectorEnv
 from gymnasium import spaces
 import genesis as gs
+import torch
 
 from adrobo_inverted_pendulum_genesis.entity.inverted_pendulum import InvertedPendulum
 from adrobo_inverted_pendulum_genesis.reward_function.reward_function import RewardFunction
@@ -12,7 +13,7 @@ class Environment(VectorEnv):
     def __init__(self, num_envs=1, max_steps=1000, device="cpu", show_viewer=False):
         gs.init(
             seed = None,
-            precision = '64',
+            precision = '32',
             debug = False,
             eps = 1e-12,
             logging_level = "warning",
@@ -47,7 +48,7 @@ class Environment(VectorEnv):
                 world_frame_size = 1.0,
                 show_link_frame = False,
                 show_cameras = False,
-                plane_reflection = True,
+                plane_reflection = False,
                 ambient_light = (0.1, 0.1, 0.1),
                 n_rendered_envs = num_envs,
             ),
@@ -70,12 +71,12 @@ class Environment(VectorEnv):
         )
 
         super().__init__()
-
+        self.device = torch.device(device)
         self.max_steps = max_steps
-        self.step_count = np.zeros(num_envs, dtype=np.int32)
-        self.prev_inverted_degree = np.zeros(num_envs, dtype=np.float32)
+        self.step_count = torch.zeros(num_envs, dtype=torch.int32, device=self.device)
+        self.prev_inverted_degree = torch.zeros(num_envs, dtype=torch.float32, device=self.device)
         self.num_envs = num_envs
-        self.env_ids = np.arange(self.num_envs)
+        self.env_ids = torch.arange(num_envs, device=self.device)
         self.substeps = 10
 
         self.inverted_pendulum = InvertedPendulum(self.scene, num_envs=self.num_envs)
@@ -95,11 +96,11 @@ class Environment(VectorEnv):
         self.step_count[:] = 0
         self.prev_inverted_degree[:] = 0
         self.scene.reset()
-        self.inverted_pendulum.reset(env_idx=self.env_ids)
+        self.inverted_pendulum.reset(env_idx=self.env_ids.cpu().numpy())
 
-        observation = np.zeros((self.num_envs, 1), dtype=np.float64)
+        observation = torch.zeros((self.num_envs, 1), dtype=torch.float32, device=self.device)
         infos = [{} for _ in range(self.num_envs)]
-        return observation, infos
+        return observation.cpu().numpy(), infos
 
     def reset_idx(self, env_ids):
         self.inverted_pendulum.reset(env_idx=self.to_env_list(env_ids))
@@ -107,11 +108,19 @@ class Environment(VectorEnv):
         self.step_count[self.to_env_list(env_ids)] = 0
 
     def step(self, action):
-        terminated = np.zeros(self.num_envs, dtype=np.bool_)
-        truncated  = np.zeros(self.num_envs, dtype=np.bool_)
+        terminated = torch.zeros(self.num_envs, dtype=torch.bool, device=self.device)
+        truncated = torch.zeros_like(terminated)
         infos = [{} for _ in range(self.num_envs)]
 
-        self.inverted_pendulum.action(action[:, 0], action[:, 1], envs_idx=self.to_env_list(self.env_ids))
+        action = torch.as_tensor(action, dtype=torch.float32, device=self.device)
+
+
+        self.inverted_pendulum.action(
+            action[:, 0].cpu().numpy(),
+            action[:, 1].cpu().numpy(),
+            envs_idx=self.env_ids.cpu().numpy()
+        )
+
         self.scene.step(self.substeps)
 
         inv_deg = self.inverted_pendulum.read_inverted_degree()
@@ -119,20 +128,26 @@ class Environment(VectorEnv):
         self.prev_inverted_degree[:] = inv_deg
         self.step_count += 1
 
-        observation = self.calculation_tool.normalization_inverted_degree(inv_deg).reshape(self.num_envs, 1)
-        reward = self.reward_function.calculate_reward(inv_deg, inv_vel, action) #+ self.step_count
+        observation = self.calculation_tool.normalization_inverted_degree(
+            inv_deg
+        ).unsqueeze(1)
+
+        reward = self.reward_function.calculate_reward(inv_deg, inv_vel, action)
 
         step_timeout = self.step_count >= self.max_steps
-        angle_fail   = np.logical_or(inv_deg <= -100.0, inv_deg >= 20.0)
+        angle_fail   = torch.logical_or(inv_deg <= -100.0, inv_deg >= 20.0)
 
         truncated[:] = step_timeout
         terminated[:] = angle_fail
 
-        done_ids = np.where(np.logical_or(terminated, truncated))[0]
-        if done_ids.size:
-            self.reset_idx(done_ids)
+        done_mask = torch.logical_or(terminated, truncated)
+        done_ids = torch.nonzero(done_mask, as_tuple=False).view(-1)
+
+        if done_ids.numel() > 0:
+            self.reset_idx(self.calculation_tool.to_env_list(done_ids.cpu().numpy()))
 
         return observation, reward, terminated, truncated, infos
+
 
     def render(self):
         pass

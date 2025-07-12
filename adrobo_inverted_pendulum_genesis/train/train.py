@@ -31,7 +31,6 @@ class Policy(GaussianMixin, Model):
         self.log_std_parameter = nn.Parameter(torch.zeros(self.num_actions))
 
     def compute(self, inputs, role):
-        # Pendulum-v1 action_space is -2 to 2
         return 2 * torch.tanh(self.net(inputs["states"])), self.log_std_parameter, {}
 
 class Value(DeterministicMixin, Model):
@@ -49,7 +48,7 @@ class Value(DeterministicMixin, Model):
         return self.net(inputs["states"]), {}
 
 
-vec_env = Environment(num_envs=10, max_steps=1024, device = "cpu", show_viewer=True)
+vec_env = Environment(num_envs=4096, max_steps=1024, device = "cuda", show_viewer=False)
 env     = wrap_env(vec_env)
 device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -89,11 +88,12 @@ cfg["value_preprocessor_kwargs"] = {"size": 1, "device": device}
 
 cfg["experiment"]["directory"] = "../model"
 cfg["experiment"]["experiment_name"] = "inverted_pendulum"
-cfg["experiment"]["write_interval"] = 1000
-cfg["experiment"]["checkpoint_interval"] = 1000
+cfg["experiment"]["write_interval"] = 10000
+cfg["experiment"]["checkpoint_interval"] = 10000
 cfg["experiment"]["store_separately"] = False
 
 
+cfg["mixed_precision"] = True
 agent = PPO(models=models,
             memory=memory,
             cfg=cfg,
@@ -111,6 +111,9 @@ env.close()
 
 scaler = agent._state_preprocessor.to("cpu")
 policy = models["policy"].to("cpu").eval()
+
+policy._g_clip_actions_min = policy._g_clip_actions_min.cpu()
+policy._g_clip_actions_max = policy._g_clip_actions_max.cpu()
 
 class PolicyWithScaler(nn.Module):
     def __init__(self, scaler, net):

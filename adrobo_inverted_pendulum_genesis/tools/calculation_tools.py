@@ -1,13 +1,16 @@
 import numpy as np
+import torch
+
 
 class CalculationTool(object):
-    @staticmethod
-    def denormalization_inverted_degree(value):
-        value = np.asarray(value, dtype=np.float32)
-        return (value + 1) * 180
 
     @staticmethod
-    def normalization_inverted_degree(value, low=-100.0, high=20.0):
+    def normalization_inverted_degree(value, low: float = -100.0, high: float = 20.0):
+        if isinstance(value, torch.Tensor):
+            value = torch.clamp(value, low, high)
+            return 2 * (value - low) / (high - low) - 1
+
+        # それ以外 → NumPy 配列に変換して処理
         value = np.asarray(value, dtype=np.float32)
         value = np.clip(value, low, high)
         return 2 * (value - low) / (high - low) - 1

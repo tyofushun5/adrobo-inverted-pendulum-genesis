@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 class RewardFunction(object):
     def __init__(self,
@@ -28,7 +29,13 @@ class RewardFunction(object):
                          theta_vel,
                          action,
                          ):
-        theta      = np.asarray(theta,      np.float32)
+
+        if torch.is_tensor(theta):
+            theta = theta.detach().cpu().numpy()
+            theta_vel = theta_vel.detach().cpu().numpy()
+            action = action.detach().cpu().numpy()
+
+        theta = np.asarray(theta,      np.float32)
         theta_vel  = np.asarray(theta_vel,  np.float32)
         action     = np.asarray(action,     np.float32)
 
