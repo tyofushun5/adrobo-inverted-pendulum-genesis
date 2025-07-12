@@ -9,14 +9,14 @@ from adrobo_inverted_pendulum_genesis.tools.calculation_tools import Calculation
 
 
 class Environment(VectorEnv):
-    def __init__(self, num_envs=1, max_steps=1000, show_viewer=False):
+    def __init__(self, num_envs=1, max_steps=1000, device="cpu", show_viewer=False):
         gs.init(
             seed = None,
             precision = '64',
             debug = False,
             eps = 1e-12,
             logging_level = "warning",
-            backend = gs.cpu,
+            backend = gs.cpu if device == 'cpu' else gs.gpu,
             theme = 'dark',
             logger_verbose_time = False
         )
@@ -119,10 +119,8 @@ class Environment(VectorEnv):
         self.prev_inverted_degree[:] = inv_deg
         self.step_count += 1
 
-
         observation = self.calculation_tool.normalization_inverted_degree(inv_deg).reshape(self.num_envs, 1)
-        reward = self.reward_function.calculate_reward(inv_deg, inv_vel, action) + self.step_count
-
+        reward = self.reward_function.calculate_reward(inv_deg, inv_vel, action) #+ self.step_count
 
         step_timeout = self.step_count >= self.max_steps
         angle_fail   = np.logical_or(inv_deg <= -100.0, inv_deg >= 20.0)

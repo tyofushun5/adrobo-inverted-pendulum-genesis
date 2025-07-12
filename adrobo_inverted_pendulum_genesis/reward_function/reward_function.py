@@ -6,7 +6,7 @@ class RewardFunction(object):
                  w_vel=0.005,     # 角速度罰則
                  w_act=0.0001,    # トルク罰則
                  theta_min=-100.0,
-                 theta_max=+30.0,
+                 theta_max=+20.0,
                  fail_penalty=-5.0):
         self.w_p, self.w_v, self.w_a = w_posture, w_vel, w_act
         self.th_min = float(theta_min)
@@ -15,8 +15,8 @@ class RewardFunction(object):
 
     # --------------------------------------------------
     def _normalize(self, theta: np.ndarray) -> np.ndarray:
-        pos_scale = self.th_max      # +30
-        neg_scale = -self.th_min     # 100
+        pos_scale = self.th_max      #
+        neg_scale = -self.th_min
         theta_n = np.where(theta >= 0,
                            theta / pos_scale,
                            theta / neg_scale)
@@ -35,9 +35,9 @@ class RewardFunction(object):
         th_n = self._normalize(theta)
         r_posture = 1.0 - th_n**2
 
-        r_speed  = - self.w_v * theta_vel**2
-        r_energy = - self.w_a * np.sum(action**2, axis=1)
+        # r_speed  = - self.w_v * theta_vel**2
+        # r_energy = - self.w_a * np.sum(action**2, axis=1)
 
-        reward = self.w_p * r_posture + r_speed + r_energy
+        reward = self.w_p * r_posture #+ r_speed + r_energy
 
         return reward

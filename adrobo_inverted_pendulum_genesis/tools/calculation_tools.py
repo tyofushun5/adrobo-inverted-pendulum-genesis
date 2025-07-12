@@ -7,7 +7,7 @@ class CalculationTool(object):
         return (value + 1) * 180
 
     @staticmethod
-    def normalization_inverted_degree(value, low=-100.0, high=30.0):
+    def normalization_inverted_degree(value, low=-100.0, high=20.0):
         value = np.asarray(value, dtype=np.float32)
         value = np.clip(value, low, high)
         return 2 * (value - low) / (high - low) - 1

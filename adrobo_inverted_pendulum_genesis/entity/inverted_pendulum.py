@@ -73,7 +73,7 @@ class InvertedPendulum(Robot):
     #     )
 
     def action(self, velocity_right, velocity_left, envs_idx=None):
-        vel_cmd = np.stack([velocity_right*2, velocity_left*-2], axis=1).astype(np.float64)
+        vel_cmd = np.stack([velocity_right*3, velocity_left*-3], axis=1).astype(np.float64)
 
         if envs_idx is not None:
             idx = np.r_[envs_idx].tolist()

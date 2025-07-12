@@ -15,11 +15,6 @@ from skrl.utils import set_seed
 from adrobo_inverted_pendulum_genesis.environment.environment import Environment
 
 
-# script_dir = os.path.dirname(__file__)
-# parent_dir = os.path.dirname(script_dir)
-# save_dir = os.path.join(parent_dir, 'model','default_model')
-# os.makedirs(save_dir, exist_ok=True)
-
 set_seed(0)
 
 class Policy(GaussianMixin, Model):
@@ -54,10 +49,9 @@ class Value(DeterministicMixin, Model):
         return self.net(inputs["states"]), {}
 
 
-vec_env = Environment(num_envs=10, max_steps=2000, show_viewer=True)
+vec_env = Environment(num_envs=10, max_steps=1024, device = "cpu", show_viewer=True)
 env     = wrap_env(vec_env)
-# device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = env.device
+device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 memory = RandomMemory(memory_size=1024, num_envs=env.num_envs, device=device)
 
@@ -107,7 +101,7 @@ agent = PPO(models=models,
             action_space=env.action_space,
             device=device)
 
-cfg_trainer = {"timesteps": 10000, "headless": True}
+cfg_trainer = {"timesteps": 100000, "headless": True}
 trainer = ParallelTrainer(cfg=cfg_trainer, env=env, agents=[agent])
 
 
@@ -115,9 +109,7 @@ trainer.train()
 
 env.close()
 
-from pathlib import Path
-
-scaler = agent._state_preprocessor.to("cpu")   # <= ここを修正
+scaler = agent._state_preprocessor.to("cpu")
 policy = models["policy"].to("cpu").eval()
 
 class PolicyWithScaler(nn.Module):
