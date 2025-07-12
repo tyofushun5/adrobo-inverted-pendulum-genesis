@@ -4,6 +4,7 @@ import math
 from typing import Union, Tuple, Dict, Any, Optional
 
 import numpy as np
+import torch
 import gymnasium as gym
 import copy
 import genesis as gs
@@ -64,16 +65,8 @@ class InvertedPendulum(Robot):
 
         return self.agent
 
-    # def action(self, vel_r, vel_l, envs_idx=None):
-    #     vel_cmd = np.stack([vel_r*2, vel_l*2], axis=1)
-    #     self.agent.control_dofs_velocity(
-    #         vel_cmd,
-    #         self.wheel_dofs,
-    #         envs_idx=envs_idx
-    #     )
-
     def action(self, velocity_right, velocity_left, envs_idx=None):
-        vel_cmd = np.stack([velocity_right*3, velocity_left*-3], axis=1).astype(np.float64)
+        vel_cmd = np.stack([velocity_right*4, velocity_left*-4], axis=1).astype(np.float64)
 
         if envs_idx is not None:
             idx = np.r_[envs_idx].tolist()
