@@ -5,7 +5,7 @@ import torch
 class CalculationTool(object):
 
     @staticmethod
-    def normalization_inverted_degree(value, low: float = -60.0, high: float = 60.0):
+    def normalization_inverted_degree(value, low: float = -20.0, high: float = 20.0):
         if isinstance(value, torch.Tensor):
             value = torch.clamp(value, low, high)
             return 2 * (value - low) / (high - low) - 1

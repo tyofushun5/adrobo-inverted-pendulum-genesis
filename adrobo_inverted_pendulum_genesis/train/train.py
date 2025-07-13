@@ -1,8 +1,5 @@
-import os
-
 import torch
 import torch.nn as nn
-from skrl.utils.model_instantiators.torch import gaussian_model, deterministic_model
 from skrl.agents.torch.ppo import PPO, PPO_DEFAULT_CONFIG
 from skrl.envs.wrappers.torch import wrap_env
 from skrl.memories.torch import RandomMemory
@@ -47,10 +44,9 @@ class Value(DeterministicMixin, Model):
     def compute(self, inputs, role):
         return self.net(inputs["states"]), {}
 
-
-vec_env = Environment(num_envs=4096, max_steps=1024, device = "cuda", show_viewer=False)
+device = "cuda"
+vec_env = Environment(num_envs=4096, max_steps=1024, device=device, show_viewer=False)
 env     = wrap_env(vec_env)
-device  = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 memory = RandomMemory(memory_size=1024, num_envs=env.num_envs, device=device)
 
@@ -60,7 +56,7 @@ models["value"] = Value(env.observation_space, env.action_space, device)
 
 cfg = PPO_DEFAULT_CONFIG.copy()
 cfg["rollouts"] = 1024
-cfg["learning_epochs"] = 8
+cfg["learning_epochs"] = 10
 cfg["mini_batches"] = 1024
 
 cfg["discount_factor"] = 0.99
@@ -101,7 +97,7 @@ agent = PPO(models=models,
             action_space=env.action_space,
             device=device)
 
-cfg_trainer = {"timesteps": 100000, "headless": True}
+cfg_trainer = {"timesteps": 50000, "headless": True}
 trainer = ParallelTrainer(cfg=cfg_trainer, env=env, agents=[agent])
 
 

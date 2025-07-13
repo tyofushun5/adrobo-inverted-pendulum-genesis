@@ -124,7 +124,6 @@ class Environment(VectorEnv):
         self.scene.step(self.substeps)
 
         inv_deg = self.inverted_pendulum.read_inverted_degree()
-        inv_deg = inv_deg + 40
         inv_vel = (inv_deg - self.prev_inverted_degree) / self.dt_phys
         self.prev_inverted_degree[:] = inv_deg
         self.step_count += 1
@@ -134,7 +133,7 @@ class Environment(VectorEnv):
         reward = self.reward_function.calculate_reward(inv_deg, inv_vel, action)
 
         step_timeout = self.step_count >= self.max_steps
-        angle_fail   = torch.logical_or(inv_deg <= -60.0, inv_deg >= 60.0)
+        angle_fail   = torch.logical_or(inv_deg <= -20.0, inv_deg >= 20.0)
 
         truncated[:] = step_timeout
         terminated[:] = angle_fail
