@@ -5,12 +5,11 @@ import torch
 class CalculationTool(object):
 
     @staticmethod
-    def normalization_inverted_degree(value, low: float = -100.0, high: float = 20.0):
+    def normalization_inverted_degree(value, low: float = -60.0, high: float = 60.0):
         if isinstance(value, torch.Tensor):
             value = torch.clamp(value, low, high)
             return 2 * (value - low) / (high - low) - 1
 
-        # それ以外 → NumPy 配列に変換して処理
         value = np.asarray(value, dtype=np.float32)
         value = np.clip(value, low, high)
         return 2 * (value - low) / (high - low) - 1

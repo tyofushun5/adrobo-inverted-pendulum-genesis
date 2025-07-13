@@ -11,7 +11,7 @@ root = os.path.dirname(os.path.abspath(__file__))
 model_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(root, "..", "train", "policy.onnx")
 
 sess = ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
-env = Environment(num_envs=2, max_steps=10_000, device="cuda", show_viewer=True)
+env = Environment(num_envs=1, max_steps=10_000, device="cuda", show_viewer=True)
 
 obs, _ = env.reset()
 
