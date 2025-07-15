@@ -15,7 +15,6 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 robot = os.path.join(script_dir, 'MJCF', 'inverted_pendulum.xml')
 
 class InvertedPendulum(Robot):
-
     def __init__(self, scene: gs.Scene = None, num_envs: int = 1):
         super().__init__()
         self.agent = None
@@ -61,7 +60,7 @@ class InvertedPendulum(Robot):
         return self.agent
 
     def action(self, velocity_right, velocity_left, envs_idx=None):
-        vel_cmd = np.stack([velocity_right*4.0, velocity_left*-4.0], axis=1).astype(np.float64)
+        vel_cmd = np.stack([velocity_right*3.0, velocity_left*-3.0], axis=1).astype(np.float64)
 
         if envs_idx is not None:
             idx = np.r_[envs_idx].tolist()
@@ -116,7 +115,6 @@ if __name__ == "__main__":
         precision = '32',
         debug = False,
         eps = 1e-12,
-        logging_level = "warning",
         backend = gs.gpu,
         theme = 'dark',
         logger_verbose_time = False
@@ -137,7 +135,7 @@ if __name__ == "__main__":
             use_contact_island=False,
             use_hibernation=False
         ),
-        show_viewer=True,
+        show_viewer=False,
         viewer_options=gs.options.ViewerOptions(
             camera_pos=(3.5, 0.0, 2.5),
             camera_lookat=(0.0, 0.0, 0.5),
@@ -155,6 +153,14 @@ if __name__ == "__main__":
         renderer = gs.renderers.Rasterizer(),
     )
 
+    cam = scene.add_camera(
+        res    = (1280, 960),
+        pos    = (3.5, 0.0, 2.5),
+        lookat = (0, 0, 0.5),
+        fov    = 30,
+        GUI    = False
+    )
+
     plane = scene.add_entity(gs.morphs.Plane())
     num = 100
 
@@ -162,6 +168,13 @@ if __name__ == "__main__":
     inverted_pendulum.create()
 
     scene.build(n_envs=num, env_spacing=(0.5, 0.5))
+    cam.start_recording()
 
-    for i in range(100000):
+    for i in range(10000):
         scene.step()
+        cam.set_pose(
+            pos    = (3.0 * np.sin(i / 60), 3.0 * np.cos(i / 60), 2.5),
+            lookat = (0, 0, 0.5),
+        )
+        cam.render()
+    cam.stop_recording(save_to_filename='video.mp4', fps=60)

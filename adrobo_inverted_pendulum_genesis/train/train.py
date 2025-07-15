@@ -56,7 +56,7 @@ models["value"] = Value(env.observation_space, env.action_space, device)
 
 cfg = PPO_DEFAULT_CONFIG.copy()
 cfg["rollouts"] = 1024
-cfg["learning_epochs"] = 10
+cfg["learning_epochs"] = 8
 cfg["mini_batches"] = 1024
 
 cfg["discount_factor"] = 0.99
@@ -97,7 +97,7 @@ agent = PPO(models=models,
             action_space=env.action_space,
             device=device)
 
-cfg_trainer = {"timesteps": 50000, "headless": True}
+cfg_trainer = {"timesteps": 100000, "headless": True}
 trainer = ParallelTrainer(cfg=cfg_trainer, env=env, agents=[agent])
 
 
