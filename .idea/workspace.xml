@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f552430-08e4-4a9c-898f-2869f0638298" name="変更" comment="7/13 commit 3" />
+    <list default="true" id="6f552430-08e4-4a9c-898f-2869f0638298" name="変更" comment="9/17 commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,6 +58,7 @@
     "Python.torch_gymnasium_pendulum_ppo.executor": "Run",
     "Python.train.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
@@ -118,7 +122,7 @@
       <workItem from="1752260047427" duration="4200000" />
       <workItem from="1752307298093" duration="36405000" />
       <workItem from="1752390442539" duration="6309000" />
-      <workItem from="1758103620537" duration="35000" />
+      <workItem from="1758103620537" duration="3208000" />
     </task>
     <task id="LOCAL-00001" summary="6/30 commit">
       <option name="closed" value="true" />
@@ -288,7 +292,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752385697961</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="9/17 commit">
+      <option name="closed" value="true" />
+      <created>1758103767995</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1758103767996</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -327,20 +339,21 @@
     <MESSAGE value="7/13 commit 1" />
     <MESSAGE value="7/13 commit 2" />
     <MESSAGE value="7/13 commit 3" />
-    <option name="LAST_COMMIT_MESSAGE" value="7/13 commit 3" />
+    <MESSAGE value="9/17 commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="9/17 commit" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/InvertedPendulum$policy_test.coverage" NAME="policy_test のカバレッジ結果" MODIFIED="1752245688478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
-    <SUITE FILE_PATH="coverage/InvertedPendulum$train.coverage" NAME="train のカバレッジ結果" MODIFIED="1752294160152" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
-    <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$train.coverage" NAME="train のカバレッジ結果" MODIFIED="1752396573077" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
+    <SUITE FILE_PATH="coverage/InvertedPendulum$environment.coverage" NAME="environment のカバレッジ結果" MODIFIED="1751883436352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/environment" />
     <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$environment.coverage" NAME="environment のカバレッジ結果" MODIFIED="1752324498516" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/environment" />
-    <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$agent.coverage" NAME="agent のカバレッジ結果" MODIFIED="1751290354905" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity" />
+    <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$test.coverage" NAME="test のカバレッジ結果" MODIFIED="1752309191276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/InvertedPendulum$torch_gymnasium_pendulum_ppo.coverage" NAME="torch_gymnasium_pendulum_ppo のカバレッジ結果" MODIFIED="1752239872130" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis" />
     <SUITE FILE_PATH="coverage/InvertedPendulum$inverted_pendulum.coverage" NAME="inverted_pendulum のカバレッジ結果" MODIFIED="1751823604189" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity" />
-    <SUITE FILE_PATH="coverage/InvertedPendulum$environment.coverage" NAME="environment のカバレッジ結果" MODIFIED="1751883436352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/environment" />
-    <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$preview.coverage" NAME="preview のカバレッジ結果" MODIFIED="1752396431044" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/preview" />
+    <SUITE FILE_PATH="coverage/InvertedPendulum$policy_test.coverage" NAME="policy_test のカバレッジ結果" MODIFIED="1752245688478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
+    <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$train.coverage" NAME="train のカバレッジ結果" MODIFIED="1752396573077" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
+    <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$agent.coverage" NAME="agent のカバレッジ結果" MODIFIED="1751290354905" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity" />
     <SUITE FILE_PATH="coverage/InvertedPendulum$test.coverage" NAME="test のカバレッジ結果" MODIFIED="1752252688876" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
+    <SUITE FILE_PATH="coverage/InvertedPendulum$train.coverage" NAME="train のカバレッジ結果" MODIFIED="1752294160152" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train" />
+    <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$preview.coverage" NAME="preview のカバレッジ結果" MODIFIED="1758108517382" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/preview" />
     <SUITE FILE_PATH="coverage/InvertedPendulum$agent.coverage" NAME="agent のカバレッジ結果" MODIFIED="1751545440836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity" />
-    <SUITE FILE_PATH="coverage/adrobo_inverted_pendulum_genesis$test.coverage" NAME="test のカバレッジ結果" MODIFIED="1752309191276" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
