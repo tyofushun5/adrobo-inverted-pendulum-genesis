@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f552430-08e4-4a9c-898f-2869f0638298" name="変更" comment="7/13 commit 3">
-      <change beforePath="$PROJECT_DIR$/.idea/InvertedPendulum.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/InvertedPendulum.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity/inverted_pendulum.py" beforeDir="false" afterPath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/entity/inverted_pendulum.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/reward_function/reward_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/reward_function/reward_function.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train/policy.onnx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis/train/train.py" afterDir="false" />
-    </list>
+    <list default="true" id="6f552430-08e4-4a9c-898f-2869f0638298" name="変更" comment="7/13 commit 3" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,12 +24,12 @@
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {}
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/tyofushun5/adrobo-inverted-pendulum-genesis.git&quot;,
-    &quot;accountId&quot;: &quot;82dd51f6-d29c-4883-944a-2f04551ee85d&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/tyofushun5/adrobo-inverted-pendulum-genesis.git",
+    "accountId": "3e211402-c2b8-4757-83af-aef6ff636390"
   }
-}</component>
+}]]></component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../RCJ_Reinforcement_learning_genesis/.venv/lib/python3.12/site-packages/gymnasium/core.py" root0="SKIP_INSPECTION" />
   </component>
@@ -51,30 +44,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.agent.executor&quot;: &quot;Run&quot;,
-    &quot;Python.environment.executor&quot;: &quot;Run&quot;,
-    &quot;Python.inverted_pendulum.executor&quot;: &quot;Run&quot;,
-    &quot;Python.preview.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.torch_gymnasium_pendulum_ppo.executor&quot;: &quot;Run&quot;,
-    &quot;Python.train.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/shun/PycharmProjects/InvertedPendulum/adrobo_inverted_pendulum_genesis&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.agent.executor": "Run",
+    "Python.environment.executor": "Run",
+    "Python.inverted_pendulum.executor": "Run",
+    "Python.preview.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.torch_gymnasium_pendulum_ppo.executor": "Run",
+    "Python.train.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/shun/PycharmProjects/InvertedPendulum/adrobo_inverted_pendulum_genesis",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/adrobo_inverted_pendulum_genesis" />
@@ -88,8 +82,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-PY-251.26927.90" />
-        <option value="bundled-python-sdk-41e8cd69c857-64d779b69b7a-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26927.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.178" />
+        <option value="bundled-python-sdk-ce6832f46686-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.178" />
       </set>
     </attachedChunks>
   </component>
@@ -124,6 +118,7 @@
       <workItem from="1752260047427" duration="4200000" />
       <workItem from="1752307298093" duration="36405000" />
       <workItem from="1752390442539" duration="6309000" />
+      <workItem from="1758103620537" duration="35000" />
     </task>
     <task id="LOCAL-00001" summary="6/30 commit">
       <option name="closed" value="true" />
