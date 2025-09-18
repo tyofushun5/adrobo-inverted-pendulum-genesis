@@ -20,44 +20,48 @@ class Policy(GaussianMixin, Model):
         Model.__init__(self, observation_space, action_space, device)
         GaussianMixin.__init__(self, clip_actions, clip_log_std, min_log_std, max_log_std, reduction)
 
-        self.net = nn.Sequential(nn.Linear(self.num_observations, 64),
+        self.net = nn.Sequential(nn.Linear(self.num_observations, 128),
                                  nn.ReLU(),
-                                 nn.Linear(64, 64),
+                                 nn.Linear(128, 128),
                                  nn.ReLU(),
-                                 nn.Linear(64, self.num_actions))
+                                 nn.Linear(128, self.num_actions))
         self.log_std_parameter = nn.Parameter(torch.zeros(self.num_actions))
 
     def compute(self, inputs, role):
-        return 2 * torch.tanh(self.net(inputs["states"])), self.log_std_parameter, {}
+        mu = self.net(inputs["states"])
+        return mu, self.log_std_parameter, {}
+
 
 class Value(DeterministicMixin, Model):
     def __init__(self, observation_space, action_space, device, clip_actions=False):
         Model.__init__(self, observation_space, action_space, device)
         DeterministicMixin.__init__(self, clip_actions)
 
-        self.net = nn.Sequential(nn.Linear(self.num_observations, 64),
+        self.net = nn.Sequential(nn.Linear(self.num_observations, 128),
                                  nn.ReLU(),
-                                 nn.Linear(64, 64),
+                                 nn.Linear(128, 128),
                                  nn.ReLU(),
-                                 nn.Linear(64, 1))
+                                 nn.Linear(128, 1))
 
     def compute(self, inputs, role):
-        return self.net(inputs["states"]), {}
+        v = self.net(inputs["states"])  # shape: [B, 1]
+        return v, {}
+
 
 device = "cuda"
-vec_env = Environment(num_envs=4096, max_steps=1024, device=device, show_viewer=False)
+vec_env = Environment(num_envs=512, max_steps=1024, device=device, show_viewer=False)
 env     = wrap_env(vec_env)
 
-memory = RandomMemory(memory_size=1024, num_envs=env.num_envs, device=device)
+memory = RandomMemory(memory_size=256, num_envs=env.num_envs, device=device)
 
 models = {}
 models["policy"] = Policy(env.observation_space, env.action_space, device, clip_actions=True)
 models["value"] = Value(env.observation_space, env.action_space, device)
 
 cfg = PPO_DEFAULT_CONFIG.copy()
-cfg["rollouts"] = 1024
+cfg["rollouts"] = 256
 cfg["learning_epochs"] = 8
-cfg["mini_batches"] = 1024
+cfg["mini_batches"] = 64
 
 cfg["discount_factor"] = 0.99
 cfg["lambda"] = 0.95
@@ -71,10 +75,10 @@ cfg["ratio_clip"] = 0.2
 cfg["value_clip"] = 0.2
 cfg["clip_predicted_values"] = False
 
-cfg["entropy_loss_scale"] = 0.0
+cfg["entropy_loss_scale"] = 0.005
 cfg["value_loss_scale"] = 0.5
 
-cfg["kl_threshold"] = 0
+# cfg["kl_threshold"] = 0
 
 cfg["mixed_precision"] = True
 cfg["state_preprocessor"] = RunningStandardScaler
@@ -97,7 +101,7 @@ agent = PPO(models=models,
             action_space=env.action_space,
             device=device)
 
-cfg_trainer = {"timesteps": 100000, "headless": True}
+cfg_trainer = {"timesteps": 256 * 512 * 10, "headless": True}
 trainer = ParallelTrainer(cfg=cfg_trainer, env=env, agents=[agent])
 
 
@@ -124,7 +128,7 @@ wrapper = PolicyWithScaler(scaler, policy)
 dummy = torch.zeros(1, *env.single_observation_space.shape)
 
 torch.onnx.export(
-    wrapper, dummy, "policy.onnx",
+    wrapper, dummy, "policy.onnx_2",
     input_names=["obs"],
     output_names=["action_mu", "action_log_std"],
     dynamic_axes={"obs": {0: "batch"},
